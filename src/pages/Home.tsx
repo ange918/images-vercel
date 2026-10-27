@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Award, BadgeCheck, Briefcase, Building2, Calendar, Clock, GraduationCap, MapPin, Quote, Users, Wallet, Wrench } from "lucide-react";
-import { Arrow, Bars, CtaLink, Head, Ico, Marquee } from "@/components/ui";
+import { Bars, CtaLink, Head, Ico, Marquee } from "@/components/ui";
 import { useRequests } from "@/components/Requests";
 import { SiteNav } from "@/components/Layout";
 import { FORMATIONS_DATA, PAG_FACTS, PARTNERS_DATA, TESTIMONIALS_DATA } from "@/data/pagData";
@@ -86,6 +86,27 @@ function HomeHero() {
   );
 }
 
+type Testimonial = (typeof TESTIMONIALS_DATA)[number];
+
+/** One band of testimonial cards that scrolls forever. `reverse` runs it left to right. */
+function TestimonialRow({ items, reverse = false }: { items: Testimonial[]; reverse?: boolean }) {
+  const loop = [...items, ...items, ...items, ...items];
+  return (
+    <div className="tm-band">
+      <div className={`tm-track${reverse ? " reverse" : ""}`} style={{ "--n": items.length } as React.CSSProperties}>
+        {loop.map((p, i) => (
+          <article key={`${p.id}-${i}`} className="person" aria-hidden={i >= items.length ? true : undefined}>
+            <div className="avatar">{p.avatarText ?? p.author.slice(0, 2).toUpperCase()}<Quote size={12} className="q" /></div>
+            <p>« {p.quote} »</p>
+            <h5>{p.author}</h5><small>{p.role}</small>
+            <span className="pill">{p.highlight}</span>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Formations() {
   return (
     <section className="stack">
@@ -124,9 +145,8 @@ function Formations() {
 
 export function Home() {
   const { openRegistration } = useRequests();
-  const [offset, setOffset] = useState(0);
-  const people = TESTIMONIALS_DATA;
-  const shown = [0, 1, 2].map((i) => people[(offset + i) % people.length]!);
+  const rowA = TESTIMONIALS_DATA.filter((_, i) => i % 2 === 0);
+  const rowB = TESTIMONIALS_DATA.filter((_, i) => i % 2 === 1);
   const partners = PARTNERS_DATA.filter((p) => p.featured).map((p) => p.name);
 
   return (
@@ -155,23 +175,11 @@ export function Home() {
         </div>
       </section>
 
-      <section className="section">
-        <div className="row-head rv">
-          <h2>Ils sont passés par PAG</h2>
-          <div className="arrows">
-            <button className="arrow" aria-label="Précédent" onClick={() => setOffset((offset + people.length - 1) % people.length)}><Arrow dir="l" /></button>
-            <button className="arrow" aria-label="Suivant" onClick={() => setOffset((offset + 1) % people.length)}><Arrow dir="r" /></button>
-          </div>
-        </div>
-        <div className="slider">
-          {shown.map((p) => (
-            <article key={`${offset}-${p.id}`} className="person swap">
-              <div className="avatar">{p.avatarText ?? p.author.slice(0, 2).toUpperCase()}<Quote size={12} className="q" /></div>
-              <p>« {p.quote} »</p>
-              <h5>{p.author}</h5><small>{p.role}</small>
-              <span className="pill">{p.highlight}</span>
-            </article>
-          ))}
+      <section className="tm">
+        <div className="tm-head rv"><Head eyebrow="Témoignages" title={<>Ils sont passés<br />par PAG</>} text="Anciens apprenants et partenaires racontent leur expérience." /></div>
+        <div className="tm-rows">
+          <TestimonialRow items={rowA} />
+          <TestimonialRow items={rowB} reverse />
         </div>
         <Marquee items={partners} />
       </section>

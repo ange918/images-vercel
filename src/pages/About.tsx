@@ -1,11 +1,86 @@
 import { useState } from "react";
-import { Award, BadgeCheck, Building2, Clock, GraduationCap, Hammer, MapPin, Medal, Monitor, Plus, UserRound, type LucideIcon } from "lucide-react";
+import { useCallback, useEffect, useRef } from "react";
+import { Award, ChevronLeft, ChevronRight, BadgeCheck, Building2, Clock, GraduationCap, Hammer, MapPin, Medal, Monitor, Plus, UserRound, type LucideIcon } from "lucide-react";
 import { Head, Hero, Ico, Marquee } from "@/components/ui";
 import { TEAM } from "@/data/team";
 import { CAMPUSES_DATA, FAQ_DATA, PARTNERS_DATA, TIMELINE_DATA } from "@/data/pagData";
 import { ceremonieEscalierImage } from "@/assets/images";
 
 const TL_ICONS: Record<string, LucideIcon> = { construction: Hammer, desktop_windows: Monitor, school: GraduationCap, verified: BadgeCheck, apartment: Building2, military_tech: Medal };
+
+/** Rotating deck: the active card sits in front, its neighbours stay visible behind it. */
+function TeamCarousel() {
+  const n = TEAM.length;
+  const [active, setActive] = useState(0);
+  const paused = useRef(false);
+  const drag = useRef<number | null>(null);
+  const go = useCallback((d: number) => setActive((v) => (v + d + n) % n), [n]);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setInterval(() => !paused.current && go(1), 4500);
+    return () => clearInterval(t);
+  }, [go]);
+
+  const rel = (i: number) => {
+    let d = i - active;
+    if (d > n / 2) d -= n;
+    if (d < -n / 2) d += n;
+    return d;
+  };
+
+  return (
+    <div
+      className="deck rv"
+      role="region"
+      aria-roledescription="carrousel"
+      aria-label="Équipe PAG"
+      tabIndex={0}
+      onMouseEnter={() => (paused.current = true)}
+      onMouseLeave={() => (paused.current = false)}
+      onKeyDown={(e) => (e.key === "ArrowRight" ? go(1) : e.key === "ArrowLeft" ? go(-1) : null)}
+      onPointerDown={(e) => { drag.current = e.clientX; paused.current = true; }}
+      onPointerUp={(e) => {
+        if (drag.current !== null && Math.abs(e.clientX - drag.current) > 40) go(e.clientX < drag.current ? 1 : -1);
+        drag.current = null;
+      }}
+    >
+      <div className="deck-stage">
+        {TEAM.map((m, i) => {
+          const d = rel(i);
+          const far = Math.abs(d) > 2;
+          return (
+            <article
+              key={m.role}
+              className={`member${d === 0 ? " on" : ""}`}
+              aria-hidden={d !== 0}
+              onClick={() => d !== 0 && setActive(i)}
+              style={{
+                transform: `translateX(${d * 58}%) scale(${1 - Math.abs(d) * 0.14}) rotateY(${d * -14}deg)`,
+                zIndex: 10 - Math.abs(d),
+                opacity: far ? 0 : 1 - Math.abs(d) * 0.25,
+                filter: d === 0 ? "none" : `blur(${Math.abs(d) * 1.2}px)`,
+                pointerEvents: far ? "none" : "auto",
+              }}
+            >
+              <div className="avatar-lg">{m.photo ? <img src={m.photo} alt={m.name ?? m.role} loading="lazy" /> : <UserRound size={44} strokeWidth={1.3} />}</div>
+              {m.name ? <h3>{m.name}</h3> : null}
+              <b className="role">{m.role}</b>
+              <p>{m.scope}</p>
+            </article>
+          );
+        })}
+      </div>
+      <div className="deck-nav">
+        <button className="arrow" aria-label="Membre précédent" onClick={() => go(-1)}><ChevronLeft size={18} color="#fff" /></button>
+        <div className="dots">
+          {TEAM.map((m, i) => <button key={m.role} className={i === active ? "on" : ""} aria-label={m.role} onClick={() => setActive(i)} />)}
+        </div>
+        <button className="arrow" aria-label="Membre suivant" onClick={() => go(1)}><ChevronRight size={18} color="#fff" /></button>
+      </div>
+    </div>
+  );
+}
 
 export function About() {
   const [openId, setOpenId] = useState<string | null>(FAQ_DATA[0]?.id ?? null);
@@ -25,16 +100,7 @@ export function About() {
       </section>
       <section className="section">
         <div className="rv"><Head eyebrow="Équipe" title={<>L'équipe qui<br />fait vivre PAG</>} text="Direction, pédagogie, agence et campus : des interlocuteurs identifiés à chaque étape." /></div>
-        <div className="grid">
-          {TEAM.map((m) => (
-            <article key={m.role} className="member rv">
-              <div className="avatar-lg">{m.photo ? <img src={m.photo} alt={m.name ?? m.role} loading="lazy" /> : <UserRound size={34} strokeWidth={1.4} />}</div>
-              {m.name ? <h3>{m.name}</h3> : null}
-              <b className="role">{m.role}</b>
-              <p>{m.scope}</p>
-            </article>
-          ))}
-        </div>
+        <TeamCarousel />
       </section>
       <section className="section">
         <div className="rv"><Head eyebrow="Campus" title={<>Deux campus<br />pour vous accueillir</>} /></div>
