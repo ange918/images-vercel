@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNod
 import { Link } from "react-router-dom";
 import { ArrowRight, ChevronLeft, ChevronRight, X, type LucideIcon } from "lucide-react";
 import { SiteNav } from "@/components/Layout";
+import { useHeroLoaded } from "@/lib/useHeroLoaded";
 
 /** Giant background word, split in letters so they rise one after the other. */
 export function GiantWord({ word }: { word: string }) {
@@ -36,12 +37,7 @@ export function Hero({
   const ref = useRef<HTMLElement>(null);
   const stage = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const id = requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add("loaded")));
-    return () => cancelAnimationFrame(id);
-  }, []);
+  useHeroLoaded(ref);
 
   useEffect(() => {
     const onScroll = () => stage.current?.style.setProperty("--p", String(Math.min(window.scrollY, 900)));

@@ -6,6 +6,7 @@ import { RequestsProvider, useRequests } from "@/components/Requests";
 import { scrollTopNow, setLenis } from "@/lib/scroll";
 import { NAV, SITE_NAME, SOCIALS } from "@/data/site";
 import { CAMPUSES_DATA } from "@/data/pagData";
+import { ceremonieLancerToquesImage } from "@/assets/images";
 
 export function SiteNav() {
   const [open, setOpen] = useState(false);
@@ -46,11 +47,14 @@ function Footer() {
   return (
     <>
       <section className="cta-block">
-        <div className="cta-card">
-          <h2>Prêt à donner vie à votre<br />projet créatif ?</h2>
+        <img className="cta-bg" src={ceremonieLancerToquesImage} alt="" loading="lazy" />
+        <div className="cta-card rv">
+          <h2>Prêt à donner vie à votre projet créatif ?</h2>
           <p>Inscrivez-vous à la prochaine rentrée ou contactez l'agence pour un devis.</p>
-          <button className="btn btn-dark btn-sm" onClick={() => openRegistration()}>S'inscrire<ArrowUpRight size={14} /></button>
-          <Link to="/contact" className="btn btn-line btn-sm">Nous contacter</Link>
+          <div className="cta-actions">
+            <button className="btn btn-light" onClick={() => openRegistration()}>S'inscrire<ArrowUpRight size={14} /></button>
+            <Link to="/contact" className="btn btn-line">Nous contacter</Link>
+          </div>
         </div>
       </section>
       <footer className="footer">

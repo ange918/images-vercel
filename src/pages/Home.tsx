@@ -5,6 +5,7 @@ import { CtaLink, Head, Ico, Marquee } from "@/components/ui";
 import { BarChart, ChartCard, CountUp, Donut, HBars } from "@/components/charts";
 import { useRequests } from "@/components/Requests";
 import { SiteNav } from "@/components/Layout";
+import { useHeroLoaded } from "@/lib/useHeroLoaded";
 import { FORMATIONS_DATA, PAG_FACTS, PARTNERS_DATA, TESTIMONIALS_DATA } from "@/data/pagData";
 import {
   ceremonieCiergesEstradeImage,
@@ -42,10 +43,7 @@ function HomeHero() {
   const { openRegistration } = useRequests();
   const [slide, setSlide] = useState(0);
 
-  useEffect(() => {
-    const id = requestAnimationFrame(() => requestAnimationFrame(() => ref.current?.classList.add("loaded")));
-    return () => cancelAnimationFrame(id);
-  }, []);
+  useHeroLoaded(ref);
   useEffect(() => {
     const t = setInterval(() => setSlide((v) => (v + 1) % SLIDES.length), 6000);
     return () => clearInterval(t);
