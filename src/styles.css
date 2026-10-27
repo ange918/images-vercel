@@ -381,6 +381,50 @@ html.lenis, html.lenis body { height: auto; }
   .js .rv .pic { transform: none; }
 }
 
+/* Chiffres clés et graphiques */
+.num-tab { font-variant-numeric: tabular-nums; }
+.kpis { margin-top: 36px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.kpi { background: var(--card); border-radius: 22px; padding: 22px 22px 20px; box-shadow: var(--shadow); }
+.kpi .ico { margin-bottom: 14px; }
+.kpi b { display: block; font-size: clamp(30px, 3.4vw, 44px); font-weight: 600; letter-spacing: -0.03em; line-height: 1; }
+.kpi small { display: block; margin-top: 10px; font-size: 12px; line-height: 1.5; color: var(--muted); }
+.charts { margin-top: 18px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.chart-card { background: var(--card); border-radius: 22px; padding: 24px; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+.chart-card.wide { grid-column: 1 / -1; }
+.chart-card h3 { font-size: 15px; font-weight: 600; }
+.chart-card > p { margin: 4px 0 18px; font-size: 12px; line-height: 1.55; color: var(--muted); }
+.donut { position: relative; display: grid; justify-items: center; text-align: center; margin: auto 0; }
+.donut svg { width: 170px; height: 170px; }
+.donut-track { fill: none; stroke: var(--soft); stroke-width: 14; }
+.donut-arc { fill: none; stroke-width: 14; stroke-linecap: round; stroke-dasharray: var(--c); stroke-dashoffset: var(--off); transition: stroke-dashoffset 1.6s var(--ease) 0.3s; }
+.js .chart-card:not(.in) .donut-arc { stroke-dashoffset: var(--c); }
+.donut-value { position: absolute; top: 62px; font-size: 30px; font-weight: 600; letter-spacing: -0.03em; }
+.donut b { margin-top: 12px; font-size: 14px; font-weight: 600; }
+.donut small { margin-top: 2px; font-size: 11px; color: var(--faint); max-width: 200px; line-height: 1.5; }
+.barchart { margin-top: auto; }
+.barchart .plot { display: grid; grid-template-columns: 34px 1fr; gap: 8px; height: 190px; }
+.barchart .scale { display: flex; flex-direction: column; justify-content: space-between; text-align: right; font-size: 10px; color: var(--faint); font-variant-numeric: tabular-nums; margin: -6px 0; }
+.barchart .area { position: relative; border-bottom: 1px solid var(--line); }
+.barchart .grid-line { position: absolute; left: 0; right: 0; height: 0; border-top: 1px dashed var(--line); }
+.barchart .cols-bars { position: absolute; inset: 0; display: flex; justify-content: space-around; align-items: flex-end; padding: 0 12%; }
+.barchart .col { position: relative; width: 38%; height: 100%; display: flex; align-items: flex-end; justify-content: center; }
+.barchart .barbox { position: relative; width: 100%; }
+.barchart .bar { position: absolute; inset: 0; border-radius: 10px 10px 0 0; background: linear-gradient(180deg, var(--accent), #5aa9ee); transform-origin: bottom; transition: transform 1.2s var(--ease); transition-delay: calc(0.3s + var(--d, 0s)); }
+.js .chart-card:not(.in) .bar { transform: scaleY(0); }
+.js .chart-card:not(.in) .val { opacity: 0; }
+.barchart .val { transition: opacity 0.6s ease 1s; }
+.barchart .val { position: absolute; left: 0; right: 0; top: -24px; text-align: center; font-size: 13px; font-weight: 600; }
+.barchart .labels { margin: 8px 0 0 42px; display: flex; justify-content: space-around; text-align: center; }
+.barchart .labels b { display: block; font-size: 12px; font-weight: 500; }
+.barchart .labels small { font-size: 10px; color: var(--faint); }
+.hbars { display: grid; gap: 18px; }
+.hbars .row { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 8px; font-size: 12px; }
+.hbars .row b { font-weight: 500; }
+.hbars .row span { color: var(--muted); }
+.hbars .track { height: 10px; border-radius: 999px; background: var(--soft); overflow: hidden; }
+.hbars .track span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), #5aa9ee); transform-origin: left; transition: transform 1.3s var(--ease); transition-delay: calc(0.3s + var(--d, 0s)); }
+.js .chart-card:not(.in) .hbars .track span { transform: scaleX(0); }
+
 /* Icônes */
 .ico { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); flex: none; margin-bottom: 14px; transition: transform 0.4s var(--ease), background 0.3s, color 0.3s; }
 .ico.dark { background: var(--dark); color: #fff; }
@@ -478,6 +522,13 @@ html.lenis, html.lenis body { height: auto; }
   .stats-pill { gap: 16px; padding: 12px 18px; }
   .section { padding: 50px 22px 6px; }
   .head { flex-direction: column; gap: 14px; }
+  .kpis { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .kpi { padding: 18px 16px; }
+  .charts { grid-template-columns: 1fr; }
+  .hero-copy .marks { grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; padding-top: 16px; }
+  .hero-copy .marks > div { flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 12px 6px; border-radius: 16px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(6px); }
+  .hero-copy .marks b { font-size: 12px; line-height: 1.25; }
+  .hero-copy .marks small { font-size: 10px; line-height: 1.35; }
   .tm-head { padding: 0 22px; }
   .tm-track .person { width: 290px; }
   .deck-stage { height: 400px; }

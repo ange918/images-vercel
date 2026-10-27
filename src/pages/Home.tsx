@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Award, BadgeCheck, Briefcase, Building2, Clock, GraduationCap, MapPin, Quote, Users, Wallet, Wrench } from "lucide-react";
-import { Bars, CtaLink, Head, Ico, Marquee } from "@/components/ui";
+import { CtaLink, Head, Ico, Marquee } from "@/components/ui";
+import { BarChart, ChartCard, CountUp, Donut, HBars } from "@/components/charts";
 import { useRequests } from "@/components/Requests";
 import { SiteNav } from "@/components/Layout";
 import { FORMATIONS_DATA, PAG_FACTS, PARTNERS_DATA, TESTIMONIALS_DATA } from "@/data/pagData";
@@ -14,11 +15,11 @@ import {
   salleInformatiqueImage,
 } from "@/assets/images";
 
-const STATS = [
-  { label: "Diplômés formés", value: "1 500+", icon: Users },
-  { label: "Agences partenaires", value: "18", icon: Building2 },
-  { label: "Cérémonies de remise", value: "6", icon: Award },
-  { label: "Campus", value: "2", icon: MapPin },
+const KPIS = [
+  { label: "Diplômés certifiés depuis 2018", to: 1500, prefix: "", suffix: "+", icon: Users },
+  { label: "Agences partenaires", to: 18, prefix: "", suffix: "", icon: Building2 },
+  { label: "Cérémonies de remise des parchemins", to: 6, prefix: "", suffix: "", icon: Award },
+  { label: "Campus : Cotonou et Porto-Novo", to: 2, prefix: "", suffix: "", icon: MapPin },
 ];
 
 const WHY = [
@@ -189,12 +190,28 @@ export function Home() {
 
       <section className="section">
         <div className="rv"><Head eyebrow="PAG en chiffres" title={<>Une école qui a fait<br />ses preuves.</>} text="Depuis 2012, PAG transmet le savoir-faire graphique et textile au Bénin." /></div>
-        <div className="stats">
-          {STATS.map((s, i) => (
-            <article key={s.label} className="stat">
-              <Ico icon={s.icon} /><small>{s.label}</small><b>{s.value}</b><Bars seed={i + 1} rising={i === 1} />
+        <div className="kpis">
+          {KPIS.map((k) => (
+            <article key={k.label} className="kpi rv">
+              <Ico icon={k.icon} />
+              <b><CountUp to={k.to} prefix={k.prefix} suffix={k.suffix} /></b>
+              <small>{k.label}</small>
             </article>
           ))}
+        </div>
+        <div className="charts">
+          <ChartCard title="Insertion professionnelle" text="Part des diplômés en emploi ou entrepreneurs.">
+            <Donut value={94} label="Taux d'insertion" sub="Emploi & entrepreneuriat" />
+          </ChartCard>
+          <ChartCard title="Une formation pratique" text="Répartition du temps de formation en atelier.">
+            <Donut value={80} label="De pratique" sub="Conditions réelles d'agence et d'imprimerie" color="#f59e0b" />
+          </ChartCard>
+          <ChartCard title="Lauréats par cérémonie" text="Nombre de lauréats à la première et à la dernière remise.">
+            <BarChart max={300} data={[{ label: "Édition 1", sub: "2018", value: 68 }, { label: "Édition 6", sub: "2024", value: 284 }]} />
+          </ChartCard>
+          <ChartCard title={`Places pour la rentrée du ${PAG_FACTS.rentree.date.replace(" 2026", "")}`} text="Inscriptions déjà enregistrées sur la capacité de chaque formation." className="wide">
+            <HBars data={FORMATIONS_DATA.map((f) => ({ label: f.title, taken: (f.totalSpots ?? 0) - (f.remainingSpots ?? 0), total: f.totalSpots ?? 0 }))} />
+          </ChartCard>
         </div>
       </section>
 
