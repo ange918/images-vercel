@@ -27,7 +27,7 @@ export function PageHero({
           <p className="max-w-sm text-xs leading-relaxed text-paper md:text-sm">{kicker}</p>
           <h1 className="mt-3 font-semibold leading-[0.85] tracking-tighter text-paper" style={{ fontSize: "clamp(2.6rem, 10vw, 9rem)" }}>
             {title}
-            <span className="text-paper/70">*</span>
+            <span className="text-[#93c5fd]">*</span>
           </h1>
           {lead ? <p className="mt-4 max-w-lg text-sm leading-relaxed text-paper/85">{lead}</p> : null}
         </div>

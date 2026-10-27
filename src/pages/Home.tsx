@@ -109,7 +109,7 @@ export function Home() {
               Académie et agence créative au Bénin : graphisme, sérigraphie, création de contenu.
             </p>
             <p className="hero-word mt-3 font-semibold leading-[0.8] tracking-tighter text-paper">
-              PAG<span className="text-paper/70">*</span>
+              PAG<span className="text-[#93c5fd]">*</span>
             </p>
             <div className="pointer-events-auto mt-6 flex flex-wrap items-center gap-3 md:mt-8">
               <Link to="/formations" className="press inline-flex items-center gap-2 rounded-full bg-paper px-6 py-3.5 text-sm font-medium text-ink">

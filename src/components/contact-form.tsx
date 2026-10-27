@@ -3,7 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 const field =
-  "mt-2 w-full rounded-2xl border border-line bg-paper px-4 py-3 text-base outline-none transition-colors placeholder:text-faint focus:border-night";
+  "mt-2 w-full rounded-2xl border border-line bg-paper px-4 py-3 text-base outline-none transition-colors placeholder:text-faint focus:border-accent";
 
 /** Builds a WhatsApp message from the form and opens the chat with the studio. */
 export function ContactForm({ whatsapp, topics }: { whatsapp: string; topics: string[] }) {
