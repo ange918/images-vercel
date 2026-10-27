@@ -176,6 +176,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .offer .meta small { font-size: 11px; color: var(--faint); }
 .offer .meta .p { font-size: 15px; color: #334155; white-space: nowrap; }
 .offer p.d { padding: 10px 8px 0; font-size: 12px; line-height: 1.65; color: var(--muted); }
+.offer { display: flex; flex-direction: column; }
+.offer .more { margin: auto 8px 0; align-self: flex-start; pointer-events: none; }
+.offer ul { margin-bottom: 16px; }
+.offer:hover .more svg { transform: translateX(3px); }
 .offer ul { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 12px 8px 0; font-size: 10px; color: var(--faint); }
 .offer li::before { content: "•"; color: var(--accent); margin-right: 5px; }
 

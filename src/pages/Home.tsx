@@ -165,7 +165,7 @@ function Formations() {
                 <p>{f.tagline}. {f.campuses}.</p>
                 <div className="foot">
                   <b>{f.price}</b>
-                  <CtaLink to={`/formations/${f.id}`} className="btn btn-light btn-sm">Voir la formation</CtaLink>
+                  <CtaLink to={`/formations/${f.id}`} className="btn btn-light btn-sm">En savoir plus</CtaLink>
                 </div>
               </div>
             </article>

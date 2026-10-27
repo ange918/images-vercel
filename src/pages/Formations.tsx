@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BadgeCheck, Clock, MapPin, Users } from "lucide-react";
+import { ArrowRight, BadgeCheck, Clock, MapPin, Users } from "lucide-react";
 import { Head, Hero, Ico } from "@/components/ui";
 import { FORMATIONS_DATA, PAG_FACTS, WORKSHOPS_DATA } from "@/data/pagData";
 import { salleInformatiqueImage } from "@/assets/images";
@@ -17,6 +17,7 @@ export function Formations() {
               <div className="meta"><div><b>{f.title}</b><small>{f.category}</small></div><span className="p">{f.price}</span></div>
               <p className="d">{f.description}</p>
               <ul><li><BadgeCheck size={12} />{f.diplomaBadge}</li><li><MapPin size={12} />{f.campuses}</li></ul>
+              <span className="btn btn-dark btn-sm more">En savoir plus<ArrowRight size={14} /></span>
             </Link>
           ))}
         </div>

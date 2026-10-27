@@ -68,6 +68,7 @@ export function FormationDetail() {
             <Link key={o.id} to={`/formations/${o.id}`} className="offer rv">
               <div className="pic"><img src={o.imageUrl} alt={o.title} loading="lazy" /><span>{o.duration}</span></div>
               <div className="meta"><div><b>{o.title}</b><small>{o.tagline}</small></div><span className="p">{o.price}</span></div>
+              <span className="btn btn-dark btn-sm more">En savoir plus<ArrowRight size={14} /></span>
             </Link>
           ))}
         </div>
