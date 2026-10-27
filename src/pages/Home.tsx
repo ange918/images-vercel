@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Award, BadgeCheck, Briefcase, Building2, Calendar, Clock, GraduationCap, MapPin, Quote, Users, Wallet, Wrench } from "lucide-react";
+import { ArrowRight, Award, BadgeCheck, Briefcase, Building2, Clock, GraduationCap, MapPin, Quote, Users, Wallet, Wrench } from "lucide-react";
 import { Bars, CtaLink, Head, Ico, Marquee } from "@/components/ui";
 import { useRequests } from "@/components/Requests";
 import { SiteNav } from "@/components/Layout";
@@ -59,17 +59,16 @@ function HomeHero() {
           <div key={s.image} className={`backdrop slide${i === slide ? " on" : ""}`} style={{ backgroundImage: `url(${s.image})`, backgroundPosition: s.position }} />
         ))}
         <div className="hero-copy">
-          <p className="eyebrow" style={step(0)}>Académie &amp; Agence Digitale • Agréée au Bénin</p>
-          <p className="live" style={step(1)}><Calendar size={13} />{PAG_FACTS.rentree.status} • {PAG_FACTS.rentree.long}</p>
-          <h1 style={step(2)}>Formations Métiers d'Excellence &amp; Production Graphique</h1>
-          <p className="sub" style={step(3)}>
+          <p className="eyebrow from-top" style={step(0)}>Académie &amp; Agence Digitale • Agréée au Bénin</p>
+          <h1 className="from-top" style={step(1)}>Formations Métiers d'Excellence &amp; Production Graphique</h1>
+          <p className="sub from-top" style={step(2)}>
             Cursus professionnels intensifs de <b>12 mois</b> sanctionnés par un <b>Diplôme d'État</b> officiel avec stage en entreprise garanti. Pôle d'innovation en design graphique, sérigraphie industrielle et audiovisuel.
           </p>
-          <div className="actions" style={step(4)}>
+          <div className="actions from-left" style={step(3)}>
             <Link to="/formations" className="btn btn-light"><GraduationCap size={16} />Découvrir nos formations (12 mois)</Link>
             <button className="btn btn-line" onClick={() => openRegistration()}>Candidater en ligne<ArrowRight size={16} /></button>
           </div>
-          <div className="marks" style={step(5)}>
+          <div className="marks from-left" style={step(4)}>
             <div><Ico icon={Clock} size={16} /><span><b>12 Mois</b><small>Avec stage garanti</small></span></div>
             <div><Ico icon={GraduationCap} size={16} /><span><b>Diplôme d'État</b><small>Reconnu au Bénin</small></span></div>
             <div><Ico icon={MapPin} size={16} /><span><b>{PAG_FACTS.campusCount} Campus</b><small>{PAG_FACTS.citiesLabel}</small></span></div>
@@ -106,37 +105,74 @@ function TestimonialRow({ items, reverse = false }: { items: Testimonial[]; reve
   );
 }
 
+/** Pinned section: scrolling down slides the cards sideways, one leaving while the next comes in. */
 function Formations() {
+  const outer = useRef<HTMLElement>(null);
+  const track = useRef<HTMLDivElement>(null);
+  const bar = useRef<HTMLSpanElement>(null);
+  const [dist, setDist] = useState(0);
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const measure = () => {
+      const t = track.current;
+      if (t) setDist(Math.max(0, t.scrollWidth - (t.parentElement?.clientWidth ?? window.innerWidth)));
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const el = outer.current;
+      const t = track.current;
+      if (!el || !t) return;
+      const travel = el.offsetHeight - window.innerHeight;
+      const p = travel > 0 ? Math.min(1, Math.max(0, -el.getBoundingClientRect().top / travel)) : 0;
+      t.style.transform = `translate3d(${(-p * dist).toFixed(1)}px, 0, 0)`;
+      if (bar.current) bar.current.style.transform = `scaleX(${p.toFixed(4)})`;
+      setCurrent(Math.min(FORMATIONS_DATA.length - 1, Math.round(p * (FORMATIONS_DATA.length - 1))));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, [dist]);
+
   return (
-    <section className="stack">
-      <div className="stack-intro rv">
-        <span className="eyebrow">Académie</span>
-        <h2>Nos formations</h2>
-        <p>Trois cursus professionnels, 100 % pratiques, pour passer de la passion au métier : du certificat PAG au Diplôme d'État (CQM), avec stage garanti. {PAG_FACTS.rentree.long}.</p>
-        <ol>
+    <section ref={outer} className="hscroll" style={{ height: `calc(100svh + ${dist}px)` }} aria-label="Nos formations">
+      <div className="hscroll-pin">
+        <div className="hscroll-head">
+          <h2>Nos formations</h2>
+          <p>{String(current + 1).padStart(2, "0")} / {String(FORMATIONS_DATA.length).padStart(2, "0")}</p>
+          <span className="hscroll-bar"><span ref={bar} /></span>
+        </div>
+        <div ref={track} className="hscroll-track">
           {FORMATIONS_DATA.map((f, i) => (
-            <li key={f.id}><small>{String(i + 1).padStart(2, "0")}</small>{f.title}</li>
-          ))}
-        </ol>
-        <div style={{ marginTop: 26 }}><CtaLink to="/formations">Toutes les formations</CtaLink></div>
-      </div>
-      <div className="stack-cards">
-        {FORMATIONS_DATA.map((f, i) => (
-          <article key={f.id} className="stack-card" style={{ zIndex: i + 1 }}>
-            <img src={f.imageUrl} alt={`Formation ${f.title}`} loading="lazy" />
-            <div className="shade" />
-            <div className="tag"><span><Clock size={12} />{f.duration}</span><span><BadgeCheck size={12} />{f.diplomaBadge}</span></div>
-            <div className="info">
-              <p className="num">{String(i + 1).padStart(2, "0")} / {String(FORMATIONS_DATA.length).padStart(2, "0")}</p>
-              <h3>{f.title}</h3>
-              <p>{f.tagline}. {f.campuses}.</p>
-              <div className="foot">
-                <b>{f.price}</b>
-                <CtaLink to={`/formations/${f.id}`} className="btn btn-light btn-sm">Voir la formation →</CtaLink>
+            <article key={f.id} className="h-card">
+              <img src={f.imageUrl} alt={`Formation ${f.title}`} loading="lazy" draggable={false} />
+              <div className="shade" />
+              <div className="tag"><span><Clock size={12} />{f.duration}</span><span><BadgeCheck size={12} />{f.diplomaBadge}</span></div>
+              <div className="info">
+                <p className="num">{String(i + 1).padStart(2, "0")} / {String(FORMATIONS_DATA.length).padStart(2, "0")}</p>
+                <h3>{f.title}</h3>
+                <p>{f.tagline}. {f.campuses}.</p>
+                <div className="foot">
+                  <b>{f.price}</b>
+                  <CtaLink to={`/formations/${f.id}`} className="btn btn-light btn-sm">Voir la formation</CtaLink>
+                </div>
               </div>
-            </div>
-          </article>
-        ))}
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
