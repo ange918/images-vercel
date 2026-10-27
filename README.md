@@ -10,3 +10,5 @@ npm run build
 
 Pages : `/`, `/formations`, `/formations/:id`, `/services`, `/ceremonies`, `/a-propos`, `/actualites`, `/contact`.
 Les contenus sont dans `src/data/pagData.ts`.
+
+Déploiement : le site se construit avec `npm run build` (dossier `dist`).
