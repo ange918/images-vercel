@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import Lenis from "lenis";
-import { NAV, SITE_NAME, SOCIALS, WHATSAPP } from "@/data/site";
+import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
+import { RequestsProvider, useRequests } from "@/components/Requests";
+import { scrollTopNow, setLenis } from "@/lib/scroll";
+import { NAV, SITE_NAME, SOCIALS } from "@/data/site";
 import { CAMPUSES_DATA } from "@/data/pagData";
 
 export function SiteNav() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
+  const { openRegistration } = useRequests();
   useEffect(() => setOpen(false), [pathname]);
   return (
     <nav className="nav">
@@ -19,7 +23,7 @@ export function SiteNav() {
         ))}
       </ul>
       <div className="nav-right">
-        <a href={`https://wa.me/${WHATSAPP}`} target="_blank" rel="noreferrer" className="btn btn-dark btn-sm">S'inscrire</a>
+        <button className="btn btn-dark btn-sm" onClick={() => openRegistration()}>S'inscrire<ArrowUpRight size={14} /></button>
         <button className="burger" aria-label={open ? "Fermer le menu" : "Ouvrir le menu"} aria-expanded={open} onClick={() => setOpen((v) => !v)}>
           {open ? "×" : "☰"}
         </button>
@@ -38,14 +42,17 @@ export function SiteNav() {
 }
 
 function Footer() {
+  const { openRegistration } = useRequests();
   return (
-    <section className="cta-wrap">
-      <div className="cta-card rv-static">
-        <h2>Prêt à donner vie à votre<br />projet créatif ?</h2>
-        <p>Inscrivez-vous à la prochaine rentrée ou demandez un devis à l'agence.</p>
-        <Link to="/formations" className="btn btn-dark btn-sm">Voir les formations</Link>
-        <Link to="/contact" className="btn btn-line btn-sm">Nous contacter</Link>
-      </div>
+    <>
+      <section className="cta-block">
+        <div className="cta-card">
+          <h2>Prêt à donner vie à votre<br />projet créatif ?</h2>
+          <p>Inscrivez-vous à la prochaine rentrée ou contactez l'agence pour un devis.</p>
+          <button className="btn btn-dark btn-sm" onClick={() => openRegistration()}>S'inscrire<ArrowUpRight size={14} /></button>
+          <Link to="/contact" className="btn btn-line btn-sm">Nous contacter</Link>
+        </div>
+      </section>
       <footer className="footer">
         <div className="cols">
           <div className="rv">
@@ -54,7 +61,7 @@ function Footer() {
           </div>
           <div className="rv">
             <h4>Campus</h4>
-            {CAMPUSES_DATA.map((c) => <p key={c.id}><b>{c.name.split(" (")[0]}</b><br />{c.quarter}</p>)}
+            {CAMPUSES_DATA.map((c) => <p key={c.id} className="iconline"><MapPin size={14} /><span><b>{c.name.split(" (")[0]}</b><br />{c.quarter}</span></p>)}
           </div>
           <div className="rv">
             <h4>Suivre</h4>
@@ -62,13 +69,14 @@ function Footer() {
           </div>
           <div className="rv">
             <h4>Contact</h4>
-            <a href={`https://wa.me/${WHATSAPP}`} target="_blank" rel="noreferrer">WhatsApp : +229 01 66 04 44 36</a>
+            <a className="iconline" href="tel:+2290166044436"><Phone size={14} />+229 01 66 04 44 36</a>
+            <Link className="iconline" to="/contact"><Mail size={14} />Écrire à PAG</Link>
           </div>
         </div>
         <div className="watermark" aria-hidden="true">PÉNIELLE</div>
         <p className="copy">©2026 {SITE_NAME}</p>
       </footer>
-    </section>
+    </>
   );
 }
 
@@ -84,16 +92,17 @@ export function Layout() {
       lenis.raf(t);
       frame = requestAnimationFrame(raf);
     });
-    (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
+    setLenis(lenis);
     return () => {
       cancelAnimationFrame(frame);
       lenis.destroy();
+      setLenis(null);
     };
   }, []);
 
   // Scroll to top, then reveal elements as they enter the viewport (staggered inside each parent)
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+    scrollTopNow();
     const items = [...document.querySelectorAll<HTMLElement>(".rv")];
     const seen = new Map<Element, number>();
     items.forEach((el) => {
@@ -119,9 +128,11 @@ export function Layout() {
   }, [pathname]);
 
   return (
-    <div className="frame">
-      <Outlet />
-      <Footer />
-    </div>
+    <RequestsProvider>
+      <div className="frame">
+        <Outlet />
+        <Footer />
+      </div>
+    </RequestsProvider>
   );
 }

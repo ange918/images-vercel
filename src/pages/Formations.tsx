@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Head, Hero } from "@/components/ui";
+import { BadgeCheck, Clock, MapPin, Users } from "lucide-react";
+import { Head, Hero, Ico } from "@/components/ui";
 import { FORMATIONS_DATA, PAG_FACTS, WORKSHOPS_DATA } from "@/data/pagData";
 import { salleInformatiqueImage } from "@/assets/images";
 
@@ -15,7 +16,7 @@ export function Formations() {
               <div className="pic"><img src={f.imageUrl} alt={`Formation ${f.title}`} loading="lazy" /><span>{f.duration}</span></div>
               <div className="meta"><div><b>{f.title}</b><small>{f.category}</small></div><span className="p">{f.price}</span></div>
               <p className="d">{f.description}</p>
-              <ul><li>{f.diplomaBadge}</li><li>Inscription {f.inscriptionFee}</li></ul>
+              <ul><li><BadgeCheck size={12} />{f.diplomaBadge}</li><li><MapPin size={12} />{f.campuses}</li></ul>
             </Link>
           ))}
         </div>
@@ -25,10 +26,10 @@ export function Formations() {
         <div className="why">
           {WORKSHOPS_DATA.map((w) => (
             <article key={w.id} className="why-card rv">
-              <span className="pill">{w.duration} · {w.level}</span>
+              <Ico icon={Clock} className="dark" /><span className="pill">{w.duration} · {w.level}</span>
               <h3>{w.title}</h3><p>{w.description}</p>
               <ul>{w.topics.slice(0, 3).map((t) => <li key={t}>{t}</li>)}</ul>
-              <div className="row" style={{ marginTop: 14 }}><span>{w.audience}</span><b>{w.price}</b></div>
+              <div className="row" style={{ marginTop: 14 }}><span><Users size={12} style={{ marginRight: 6, verticalAlign: -1 }} />{w.audience}</span><b>{w.price}</b></div>
             </article>
           ))}
         </div>

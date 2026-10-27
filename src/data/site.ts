@@ -1,7 +1,6 @@
 import { SOCIAL_LINKS } from "./pagData";
 
 export const SITE_NAME = "Pénielle Art Graphic";
-export const WHATSAPP = "2290166044436";
 
 export const NAV = [
   { n: "01", label: "Accueil", to: "/" },

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Arrow, Bars, CtaLink, Head, Marquee } from "@/components/ui";
+import { ArrowRight, Award, BadgeCheck, Briefcase, Building2, Calendar, Clock, GraduationCap, MapPin, Quote, Users, Wallet, Wrench } from "lucide-react";
+import { Arrow, Bars, CtaLink, Head, Ico, Marquee } from "@/components/ui";
+import { useRequests } from "@/components/Requests";
 import { SiteNav } from "@/components/Layout";
 import { FORMATIONS_DATA, PAG_FACTS, PARTNERS_DATA, TESTIMONIALS_DATA } from "@/data/pagData";
 import {
@@ -11,20 +13,19 @@ import {
   ceremonieLaureatsAssisImage,
   salleInformatiqueImage,
 } from "@/assets/images";
-import { WHATSAPP } from "@/data/site";
 
 const STATS = [
-  { label: "Diplômés formés", value: "1 500+" },
-  { label: "Agences partenaires", value: "18" },
-  { label: "Cérémonies de remise", value: "6" },
-  { label: "Campus", value: "2" },
+  { label: "Diplômés formés", value: "1 500+", icon: Users },
+  { label: "Agences partenaires", value: "18", icon: Building2 },
+  { label: "Cérémonies de remise", value: "6", icon: Award },
+  { label: "Campus", value: "2", icon: MapPin },
 ];
 
 const WHY = [
-  { t: "Une formation 100 % pratique", d: "Des ateliers équipés, des projets réels et un suivi par nos formateurs, du premier jour à la remise du diplôme." },
-  { t: "Un diplôme reconnu", d: "Le Certificat PAG et, pour le graphisme, la préparation au Diplôme d'État (CQM) délivré sous la tutelle de l'État béninois." },
-  { t: "Un stage garanti", d: "Chaque apprenant est placé en stage au sein d'une de nos agences partenaires ou directement chez PAG." },
-  { t: "Un tarif clair", d: "Scolarité et frais affichés avant l'inscription, avec un paiement en tranches pour le graphisme." },
+  { icon: Wrench, t: "Une formation 100 % pratique", d: "Des ateliers équipés, des projets réels et un suivi par nos formateurs, du premier jour à la remise du diplôme." },
+  { icon: BadgeCheck, t: "Un diplôme reconnu", d: "Le Certificat PAG et, pour le graphisme, la préparation au Diplôme d'État (CQM) délivré sous la tutelle de l'État béninois." },
+  { icon: Briefcase, t: "Un stage garanti", d: "Chaque apprenant est placé en stage au sein d'une de nos agences partenaires ou directement chez PAG." },
+  { icon: Wallet, t: "Un tarif clair", d: "Scolarité et frais affichés avant l'inscription, avec un paiement en tranches pour le graphisme." },
 ];
 
 const SLIDES = [
@@ -37,6 +38,7 @@ const SLIDES = [
 
 function HomeHero() {
   const ref = useRef<HTMLElement>(null);
+  const { openRegistration } = useRequests();
   const [slide, setSlide] = useState(0);
 
   useEffect(() => {
@@ -59,19 +61,19 @@ function HomeHero() {
         ))}
         <div className="hero-copy">
           <p className="eyebrow" style={step(0)}>Académie &amp; Agence Digitale • Agréée au Bénin</p>
-          <p className="live" style={step(1)}><i />{PAG_FACTS.rentree.status} • {PAG_FACTS.rentree.long}</p>
+          <p className="live" style={step(1)}><Calendar size={13} />{PAG_FACTS.rentree.status} • {PAG_FACTS.rentree.long}</p>
           <h1 style={step(2)}>Formations Métiers d'Excellence &amp; Production Graphique</h1>
           <p className="sub" style={step(3)}>
             Cursus professionnels intensifs de <b>12 mois</b> sanctionnés par un <b>Diplôme d'État</b> officiel avec stage en entreprise garanti. Pôle d'innovation en design graphique, sérigraphie industrielle et audiovisuel.
           </p>
           <div className="actions" style={step(4)}>
-            <Link to="/formations" className="btn btn-light">Découvrir nos formations (12 mois)</Link>
-            <a className="btn btn-line" href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Bonjour PAG, je souhaite candidater à la formation Graphisme & Design Visuel.")}`} target="_blank" rel="noreferrer">Candidater en ligne</a>
+            <Link to="/formations" className="btn btn-light"><GraduationCap size={16} />Découvrir nos formations (12 mois)</Link>
+            <button className="btn btn-line" onClick={() => openRegistration()}>Candidater en ligne<ArrowRight size={16} /></button>
           </div>
           <div className="marks" style={step(5)}>
-            <div><b>12 Mois</b><small>Avec stage garanti</small></div>
-            <div><b>Diplôme d'État</b><small>Reconnu au Bénin</small></div>
-            <div><b>{PAG_FACTS.campusCount} Campus</b><small>{PAG_FACTS.citiesLabel}</small></div>
+            <div><Ico icon={Clock} size={16} /><span><b>12 Mois</b><small>Avec stage garanti</small></span></div>
+            <div><Ico icon={GraduationCap} size={16} /><span><b>Diplôme d'État</b><small>Reconnu au Bénin</small></span></div>
+            <div><Ico icon={MapPin} size={16} /><span><b>{PAG_FACTS.campusCount} Campus</b><small>{PAG_FACTS.citiesLabel}</small></span></div>
           </div>
         </div>
         <div className="hero-dots">
@@ -103,7 +105,7 @@ function Formations() {
           <article key={f.id} className="stack-card" style={{ zIndex: i + 1 }}>
             <img src={f.imageUrl} alt={`Formation ${f.title}`} loading="lazy" />
             <div className="shade" />
-            <div className="tag"><span>{f.duration}</span><span>{f.diplomaBadge}</span></div>
+            <div className="tag"><span><Clock size={12} />{f.duration}</span><span><BadgeCheck size={12} />{f.diplomaBadge}</span></div>
             <div className="info">
               <p className="num">{String(i + 1).padStart(2, "0")} / {String(FORMATIONS_DATA.length).padStart(2, "0")}</p>
               <h3>{f.title}</h3>
@@ -121,6 +123,7 @@ function Formations() {
 }
 
 export function Home() {
+  const { openRegistration } = useRequests();
   const [offset, setOffset] = useState(0);
   const people = TESTIMONIALS_DATA;
   const shown = [0, 1, 2].map((i) => people[(offset + i) % people.length]!);
@@ -137,7 +140,7 @@ export function Home() {
         <div className="stats">
           {STATS.map((s, i) => (
             <article key={s.label} className="stat">
-              <small>{s.label}</small><b>{s.value}</b><Bars seed={i + 1} rising={i === 1} />
+              <Ico icon={s.icon} /><small>{s.label}</small><b>{s.value}</b><Bars seed={i + 1} rising={i === 1} />
             </article>
           ))}
         </div>
@@ -147,7 +150,7 @@ export function Home() {
         <div className="rv"><Head eyebrow="Pourquoi PAG" title={<>Pourquoi se former<br />chez PAG ?</>} text="Quatre raisons de rejoindre la prochaine promotion." /></div>
         <div className="why">
           {WHY.map((w, i) => (
-            <article key={w.t} className="why-card rv"><span className="num">{String(i + 1).padStart(2, "0")}</span><h3>{w.t}</h3><p>{w.d}</p></article>
+            <article key={w.t} className="why-card rv"><Ico icon={w.icon} className="dark" /><h3>{w.t}</h3><p>{w.d}</p></article>
           ))}
         </div>
       </section>
@@ -163,7 +166,7 @@ export function Home() {
         <div className="slider">
           {shown.map((p) => (
             <article key={`${offset}-${p.id}`} className="person swap">
-              <div className="avatar">{p.avatarText ?? p.author.slice(0, 2).toUpperCase()}</div>
+              <div className="avatar">{p.avatarText ?? p.author.slice(0, 2).toUpperCase()}<Quote size={12} className="q" /></div>
               <p>« {p.quote} »</p>
               <h5>{p.author}</h5><small>{p.role}</small>
               <span className="pill">{p.highlight}</span>
@@ -180,7 +183,7 @@ export function Home() {
             <p className="lead rv">Une rentrée, trois cursus, deux campus.</p>
             <p className="rv">{PAG_FACTS.rentree.long} · {PAG_FACTS.rentree.status}. Cours du lundi au jeudi, de 08h à 13h pour le graphisme. Les places sont limitées pour garantir un poste de travail équipé à chaque apprenant.</p>
             <ul className="tags rv"><li>Graphisme</li><li>Sérigraphie</li><li>Création de contenu</li><li>Diplôme d'État</li></ul>
-            <div className="rv"><CtaLink to={`https://wa.me/${WHATSAPP}`}>S'inscrire sur WhatsApp</CtaLink></div>
+            <div className="rv"><button className="btn btn-dark btn-sm" onClick={() => openRegistration()}>S'inscrire à la rentrée<ArrowRight size={14} /></button></div>
           </div>
         </div>
       </section>

@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { ArrowRight, ChevronLeft, ChevronRight, X, type LucideIcon } from "lucide-react";
 import { SiteNav } from "@/components/Layout";
 
 /** Giant background word, split in letters so they rise one after the other. */
@@ -104,10 +105,15 @@ export function Bars({ seed, rising = false }: { seed: number; rising?: boolean 
 }
 
 export function Arrow({ dir }: { dir: "l" | "r" }) {
+  return dir === "l" ? <ChevronLeft size={18} color="#fff" /> : <ChevronRight size={18} color="#fff" />;
+}
+
+/** Round icon badge that pops in when its card is revealed. */
+export function Ico({ icon: Icon, size = 18, className = "" }: { icon: LucideIcon; size?: number; className?: string }) {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3">
-      <path d={dir === "l" ? "M15 5l-7 7 7 7" : "M9 5l7 7-7 7"} />
-    </svg>
+    <span className={`ico ${className}`} aria-hidden="true">
+      <Icon size={size} strokeWidth={1.8} />
+    </span>
   );
 }
 
@@ -115,10 +121,12 @@ export function CtaLink({ to, children, className = "btn btn-dark btn-sm" }: { t
   return /^https?:/.test(to) ? (
     <a href={to} target="_blank" rel="noreferrer" className={className}>
       {children}
+      <ArrowRight size={14} />
     </a>
   ) : (
     <Link to={to} className={className}>
       {children}
+      <ArrowRight size={14} />
     </Link>
   );
 }
@@ -147,7 +155,7 @@ export function GalleryModal({ title, photos, onClose }: { title: string; photos
   return (
     <div className="modal" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="modal-card" role="dialog" aria-modal="true" aria-label={title} data-lenis-prevent>
-        <button className="close" onClick={onClose} aria-label="Fermer la galerie">×</button>
+        <button className="close" onClick={onClose} aria-label="Fermer la galerie"><X size={22} /></button>
         <h3>{title} · {count} photos</h3>
         <div className="masonry">
           {photos.map((p, i) => (
@@ -163,47 +171,6 @@ export function GalleryModal({ title, photos, onClose }: { title: string; photos
           <button style={{ right: 16, top: "50%" }} aria-label="Photo suivante" onClick={(e) => { e.stopPropagation(); setActive((active + 1) % count); }}>›</button>
         </div>
       ) : null}
-    </div>
-  );
-}
-
-/** Builds a WhatsApp message from the form and opens the chat with PAG. */
-export function ContactForm({ whatsapp, topics }: { whatsapp: string; topics: string[] }) {
-  const [error, setError] = useState("");
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const v = (k: string) => String(data.get(k) ?? "").trim();
-    if (!v("name") || !v("message")) {
-      setError("Indiquez votre nom et votre message.");
-      return;
-    }
-    setError("");
-    const lines = ["Bonjour Pénielle Art Graphic,", "", `Nom : ${v("name")}`, v("phone") ? `Téléphone : ${v("phone")}` : "", v("topic") ? `Sujet : ${v("topic")}` : "", "", v("message")].filter(
-      (l, i, all) => l !== "" || (i > 0 && all[i - 1] !== ""),
-    );
-    window.open(`https://wa.me/${whatsapp}?text=${encodeURIComponent(lines.join("\n"))}`, "_blank", "noopener,noreferrer");
-  };
-  return (
-    <div className="form-card">
-      <h3>Écrivez-nous sur WhatsApp</h3>
-      <form onSubmit={submit} noValidate>
-        <label>Nom<input name="name" autoComplete="name" required placeholder="Votre nom" /></label>
-        <div className="two">
-          <label>Téléphone<input name="phone" type="tel" autoComplete="tel" placeholder="+229 …" /></label>
-          <label>Sujet
-            <select name="topic" defaultValue="">
-              <option value="">À préciser</option>
-              {topics.map((t) => <option key={t} value={t}>{t}</option>)}
-              <option value="Autre demande">Autre demande</option>
-            </select>
-          </label>
-        </div>
-        <label>Message<textarea name="message" rows={4} required placeholder="Décrivez votre demande" /></label>
-        {error ? <p role="alert" className="err">{error}</p> : null}
-        <button type="submit" className="btn btn-dark">Envoyer sur WhatsApp</button>
-      </form>
-      <p className="hint">Votre message s'ouvre dans WhatsApp, prêt à être envoyé.</p>
     </div>
   );
 }
