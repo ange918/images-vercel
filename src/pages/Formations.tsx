@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, BadgeCheck, Clock, MapPin, Users } from "lucide-react";
 import { Head, Hero, Ico } from "@/components/ui";
+import { useRequests } from "@/components/Requests";
 import { FORMATIONS_DATA, PAG_FACTS, WORKSHOPS_DATA } from "@/data/pagData";
 import { salleInformatiqueImage } from "@/assets/images";
 
 export function Formations() {
+  const { openRegistration } = useRequests();
   return (
     <>
       <Hero short image={salleInformatiqueImage} small={<>Nos cursus<br />professionnels</>} word="Formations" text={`${PAG_FACTS.rentree.long}. ${PAG_FACTS.rentree.status} à ${PAG_FACTS.citiesSentence}.`} position="center 40%" />
@@ -31,6 +33,7 @@ export function Formations() {
               <h3>{w.title}</h3><p>{w.description}</p>
               <ul>{w.topics.slice(0, 3).map((t) => <li key={t}>{t}</li>)}</ul>
               <div className="row" style={{ marginTop: 14 }}><span><Users size={12} style={{ marginRight: 6, verticalAlign: -1 }} />{w.audience}</span><b>{w.price}</b></div>
+              <button className="btn btn-dark btn-sm more-btn" onClick={() => openRegistration(w.id)}>En savoir plus<ArrowRight size={14} /></button>
             </article>
           ))}
         </div>

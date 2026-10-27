@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { CheckCircle2, Loader2, Send, X } from "lucide-react";
-import { CAMPUSES_DATA, FORMATIONS_DATA, SERVICES_DATA } from "@/data/pagData";
+import { CAMPUSES_DATA, FORMATIONS_DATA, SERVICES_DATA, WORKSHOPS_DATA } from "@/data/pagData";
 import { submitContactMessage, submitQuoteRequest, submitRegistration, type SendResult } from "@/lib/submissions";
 import { flushPending } from "@/lib/pendingQueue";
 import { lockScroll } from "@/lib/scroll";
@@ -63,15 +63,17 @@ const Honeypot = () => (
 
 function RegistrationForm({ formationId, onClose }: { formationId?: string; onClose: () => void }) {
   const { status, submit } = useSubmit((d, anti) => {
-    const formation = FORMATIONS_DATA.find((f) => f.id === v(d, "formation"));
+    const chosen = v(d, "formation");
+    const formation = FORMATIONS_DATA.find((f) => f.id === chosen);
+    const workshop = WORKSHOPS_DATA.find((w) => w.id === chosen);
     return submitRegistration({
       source: "registration_modal",
       fullName: v(d, "name"),
       phone: v(d, "phone"),
       email: v(d, "email"),
       campus: v(d, "campus"),
-      formationTitle: formation?.title,
-      formationSlug: formation?.id,
+      formationTitle: formation?.title ?? (workshop ? `Atelier : ${workshop.title}` : undefined),
+      formationSlug: (formation ?? workshop)?.id,
       acceptWhatsapp: d.get("whatsapp") === "on",
       message: v(d, "message"),
       ...anti,
@@ -80,9 +82,14 @@ function RegistrationForm({ formationId, onClose }: { formationId?: string; onCl
   if (status.state === "done") return <Done queued={status.queued} onClose={onClose} text="Merci ! L'équipe PAG a bien reçu votre demande d'inscription et vous recontactera très vite." />;
   return (
     <form onSubmit={submit} noValidate>
-      <label>Formation souhaitée *
+      <label>Formation ou atelier souhaité *
         <select name="formation" required defaultValue={formationId ?? FORMATIONS_DATA[0]!.id}>
-          {FORMATIONS_DATA.map((f) => <option key={f.id} value={f.id}>{f.title} — {f.duration}</option>)}
+          <optgroup label="Formations">
+            {FORMATIONS_DATA.map((f) => <option key={f.id} value={f.id}>{f.title} — {f.duration}</option>)}
+          </optgroup>
+          <optgroup label="Ateliers courts">
+            {WORKSHOPS_DATA.map((w) => <option key={w.id} value={w.id}>{w.title} — {w.duration}</option>)}
+          </optgroup>
         </select>
       </label>
       <label>Nom complet *<input name="name" autoComplete="name" required placeholder="Votre nom et prénom" /></label>

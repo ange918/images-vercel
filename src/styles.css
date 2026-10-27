@@ -236,6 +236,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .why-card li { display: flex; gap: 10px; }
 .why-card li::before { content: ""; flex: none; width: 6px; height: 6px; margin-top: 7px; border-radius: 2px; background: var(--accent); }
 .why-card .row { display: flex; justify-content: space-between; gap: 14px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.why-card:has(.more-btn) { display: flex; flex-direction: column; }
+.why-card .more-btn { margin-top: 18px; align-self: flex-start; }
+.why-card:has(.more-btn) .row { margin-top: auto !important; }
 .why-card .row b { color: var(--ink); font-weight: 600; white-space: nowrap; }
 
 /* Chronologie, FAQ */
