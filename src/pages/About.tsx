@@ -17,7 +17,6 @@ function TeamCarousel() {
   const go = useCallback((d: number) => setActive((v) => (v + d + n) % n), [n]);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const t = setInterval(() => !paused.current && go(1), 4500);
     return () => clearInterval(t);
   }, [go]);

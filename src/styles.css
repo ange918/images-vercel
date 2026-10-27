@@ -364,13 +364,18 @@ html.lenis, html.lenis body { height: auto; }
 @keyframes swap { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
+/* Réglage « réduire les animations » du téléphone : les animations d'apparition restent, en version douce
+   (déplacement court, sans flou). Seuls la parallaxe et le zoom des photos sont coupés. */
 @media (prefers-reduced-motion: reduce) {
-  .tm-track, .tm-track.reverse { animation: none; }
-  .tm-band { overflow-x: auto; }
-  .js .rv, .js .nav, .js .pill-nav li, .js .hero-small, .js .hero-text, .js .stats-pill, .js .play-card,
-  .js .hero-giant span, .js .watermark, .bars i, .js .rv .pic, .js .hero-stage .backdrop { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
-  .marquee { animation: none; }
-  .cta-card { position: relative; }
+  .js .rv, .js .stat { transform: translateY(18px); filter: none; }
+  .js .rv.in, .js .stat.in { transform: none; }
+  .js .hero-small, .js .hero-text, .js .stats-pill, .js .play-card, .js .hero-copy > * { transform: translateY(16px); filter: none; }
+  .js .loaded .hero-small, .js .loaded .hero-text, .js .loaded .stats-pill, .js .loaded .play-card, .js .loaded .hero-copy > * { transform: none; }
+  .js .hero-giant span { transform: translateY(18%); filter: none; }
+  .js .loaded .hero-giant span { transform: none; }
+  .js .hero-stage .backdrop { transform: none; transition: none; }
+  .hero-giant, .hero-bottom { margin-top: 0; }
+  .js .rv .pic { transform: none; }
 }
 
 /* Icônes */

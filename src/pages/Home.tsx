@@ -46,7 +46,6 @@ function HomeHero() {
     return () => cancelAnimationFrame(id);
   }, []);
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const t = setInterval(() => setSlide((v) => (v + 1) % SLIDES.length), 6000);
     return () => clearInterval(t);
   }, []);
