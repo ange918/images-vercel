@@ -185,8 +185,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .hscroll-head { display: flex; align-items: baseline; gap: 18px; padding: 0 12%; position: relative; }
 .hscroll-head h2 { font-size: clamp(26px, 3.4vw, 42px); font-weight: 600; letter-spacing: -0.03em; text-transform: uppercase; }
 .hscroll-head p { font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; }
-.hscroll-bar { position: absolute; left: 12%; right: 12%; bottom: -12px; height: 2px; background: var(--line); border-radius: 2px; overflow: hidden; }
-.hscroll-bar span { display: block; height: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; will-change: transform; }
 .hscroll-track { display: flex; gap: 24px; width: max-content; padding: 14px 12% 24px; will-change: transform; }
 .h-card { position: relative; flex: none; width: min(540px, 80vw); height: min(64svh, 560px); min-height: 380px; border-radius: 28px; overflow: hidden; background: var(--dark); box-shadow: 0 24px 60px rgba(11, 19, 32, 0.25); color: #fff; }
 .h-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
@@ -472,7 +470,6 @@ html.lenis, html.lenis body { height: auto; }
   .hero-copy .marks { gap: 18px; }
   .hero-dots { display: none; }
   .hscroll-head { padding: 0 22px; }
-  .hscroll-bar { left: 22px; right: 22px; }
   .hscroll-track { padding-left: 22px; padding-right: 22px; }
   .hero-small { left: 24px; top: 110px; }
   .hero-text { position: static; width: auto; margin: 0 24px 0 auto; padding-top: 230px; max-width: 200px; }

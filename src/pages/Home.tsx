@@ -109,7 +109,6 @@ function TestimonialRow({ items, reverse = false }: { items: Testimonial[]; reve
 function Formations() {
   const outer = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
-  const bar = useRef<HTMLSpanElement>(null);
   const [dist, setDist] = useState(0);
   const [current, setCurrent] = useState(0);
 
@@ -133,7 +132,6 @@ function Formations() {
       const travel = el.offsetHeight - window.innerHeight;
       const p = travel > 0 ? Math.min(1, Math.max(0, -el.getBoundingClientRect().top / travel)) : 0;
       t.style.transform = `translate3d(${(-p * dist).toFixed(1)}px, 0, 0)`;
-      if (bar.current) bar.current.style.transform = `scaleX(${p.toFixed(4)})`;
       setCurrent(Math.min(FORMATIONS_DATA.length - 1, Math.round(p * (FORMATIONS_DATA.length - 1))));
     };
     const onScroll = () => {
@@ -153,7 +151,6 @@ function Formations() {
         <div className="hscroll-head">
           <h2>Nos formations</h2>
           <p>{String(current + 1).padStart(2, "0")} / {String(FORMATIONS_DATA.length).padStart(2, "0")}</p>
-          <span className="hscroll-bar"><span ref={bar} /></span>
         </div>
         <div ref={track} className="hscroll-track">
           {FORMATIONS_DATA.map((f, i) => (
