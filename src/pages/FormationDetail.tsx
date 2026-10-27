@@ -1,144 +1,75 @@
 import { Link, useParams } from "react-router-dom";
-import { PageHero } from "@/components/PageHero";
-import { DotLink, Meta, Rise } from "@/components/bits";
+import { CtaLink, Head, Hero } from "@/components/ui";
 import { FORMATIONS_DATA, GRAPHISME_MODULES } from "@/data/pagData";
 import { NotFound } from "@/pages/NotFound";
 import { WHATSAPP } from "@/data/site";
 
-function List({ title, items }: { title: string; items?: readonly string[] }) {
+function ListCard({ title, items }: { title: string; items?: readonly string[] }) {
   if (!items?.length) return null;
   return (
-    <Rise>
-      <h3 className="text-sm font-semibold">{title}</h3>
-      <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted">
-        {items.map((item) => (
-          <li key={item} className="flex gap-3">
-            <i className="mt-2 size-1.5 shrink-0 rounded-sm bg-accent" />
-            {item}
-          </li>
-        ))}
-      </ul>
-    </Rise>
+    <article className="why-card rv"><h3>{title}</h3><ul>{items.map((i) => <li key={i}>{i}</li>)}</ul></article>
+  );
+}
+
+function Rows({ title, rows }: { title: string; rows?: readonly { label: string; value: string }[] }) {
+  if (!rows?.length) return null;
+  return (
+    <article className="why-card rv"><h3>{title}</h3>{rows.map((r) => <div key={r.label} className="row"><span>{r.label}</span><b>{r.value}</b></div>)}</article>
   );
 }
 
 export function FormationDetail() {
   const { id } = useParams();
-  const f = FORMATIONS_DATA.find((item) => item.id === id);
+  const f = FORMATIONS_DATA.find((x) => x.id === id);
   if (!f) return <NotFound />;
-  const others = FORMATIONS_DATA.filter((item) => item.id !== f.id);
-  const modules = f.id === "formation-graphisme" ? GRAPHISME_MODULES : [];
   const message = encodeURIComponent(`Bonjour PAG, je souhaite m'inscrire à la formation « ${f.title} ».`);
+  const modules = f.id === "formation-graphisme" ? GRAPHISME_MODULES : [];
+  const facts = [["Durée", f.duration], ["Scolarité", f.price], ["Inscription", f.inscriptionFee], ["Rentrée", f.startDate]];
 
   return (
-    <PageHero src={f.imageUrl} alt={`Formation ${f.title}`} kicker={`${f.category} · ${f.diplomaBadge}`} title={f.title} lead={f.tagline}>
-      <Meta label="Programme" index="02" />
-      <div className="mx-auto max-w-3xl px-5 text-center">
-        <Rise>
-          <p className="text-title font-medium">{f.objectives}</p>
-        </Rise>
-        <div className="mt-8 flex justify-center">
-          <DotLink href={`https://wa.me/${WHATSAPP}?text=${message}`}>S'inscrire sur WhatsApp</DotLink>
+    <>
+      <Hero short image={f.imageUrl} small={<>{f.category}</>} word={f.title.length > 14 ? "Formation" : f.title} text={f.tagline ?? f.description} position="center 40%" />
+      <section className="section">
+        <div className="rv"><Head eyebrow={f.diplomaBadge} title={f.title} text={f.objectives} /></div>
+        <div className="stats">
+          {facts.map(([l, v]) => <article key={l} className="stat rv"><small>{l}</small><b style={{ fontSize: 18 }}>{v}</b></article>)}
         </div>
-      </div>
-
-      <div className="mx-auto mt-16 grid max-w-5xl gap-4 px-5 sm:grid-cols-2 md:grid-cols-4 md:px-10">
-        {[
-          ["Durée", f.duration],
-          ["Scolarité", f.price],
-          ["Inscription", f.inscriptionFee],
-          ["Rentrée", f.startDate],
-        ].map(([label, value], i) => (
-          <Rise key={label} delay={i * 60}>
-            <div className="h-full rounded-3xl bg-mist p-6">
-              <p className="text-xs text-muted">{label}</p>
-              <p className="mt-2 text-lg font-semibold tracking-tight">{value}</p>
-            </div>
-          </Rise>
-        ))}
-      </div>
-
-      <div className="mx-auto mt-16 grid max-w-5xl gap-10 px-5 md:grid-cols-2 md:px-10">
-        <List title="Compétences acquises" items={f.skillsAcquired} />
-        <List title="Logiciels et outils" items={f.software} />
-        {f.schedule ? (
-          <Rise>
-            <h3 className="text-sm font-semibold">Horaires</h3>
-            <p className="mt-3 text-sm text-muted">{f.schedule}</p>
-            <p className="mt-2 text-sm text-muted">Campus : {f.campuses}</p>
-          </Rise>
-        ) : null}
-        {f.prerequisites ? (
-          <Rise>
-            <h3 className="text-sm font-semibold">Prérequis</h3>
-            <p className="mt-3 text-sm text-muted">{f.prerequisites}</p>
-          </Rise>
-        ) : null}
-        <List title="Inclus" items={f.inclus} />
-        <List title="Pièces à fournir" items={f.piecesAFournir} />
-        <List title="Matériel requis" items={f.materielsRequis} />
-        {f.tranches ? (
-          <Rise>
-            <h3 className="text-sm font-semibold">Paiement en tranches</h3>
-            <ul className="mt-3 space-y-2 text-sm text-muted">
-              {f.tranches.map((t) => (
-                <li key={t.label} className="flex justify-between gap-4 border-b border-line pb-2">
-                  <span>{t.label} · {t.deadline}</span>
-                  <span className="font-medium text-ink">{t.amount}</span>
-                </li>
-              ))}
-            </ul>
-          </Rise>
-        ) : null}
-        {f.fraisDivers ? (
-          <Rise>
-            <h3 className="text-sm font-semibold">Frais divers</h3>
-            <ul className="mt-3 space-y-2 text-sm text-muted">
-              {f.fraisDivers.map((t) => (
-                <li key={t.item} className="flex justify-between gap-4 border-b border-line pb-2">
-                  <span>{t.item}</span>
-                  <span className="font-medium text-ink">{t.amount}</span>
-                </li>
-              ))}
-            </ul>
-          </Rise>
-        ) : null}
-      </div>
-
+        <div className="rv" style={{ marginTop: 26 }}><CtaLink to={`https://wa.me/${WHATSAPP}?text=${message}`}>S'inscrire sur WhatsApp</CtaLink></div>
+      </section>
+      <section className="section">
+        <div className="why">
+          <ListCard title="Compétences acquises" items={f.skillsAcquired} />
+          <ListCard title="Logiciels et outils" items={f.software} />
+          {f.schedule ? <article className="why-card rv"><h3>Horaires et campus</h3><p>{f.schedule}</p><p style={{ marginTop: 8 }}>{f.campuses}</p></article> : null}
+          {f.prerequisites ? <article className="why-card rv"><h3>Prérequis</h3><p>{f.prerequisites}</p></article> : null}
+          <ListCard title="Inclus" items={f.inclus} />
+          <ListCard title="Pièces à fournir" items={f.piecesAFournir} />
+          <ListCard title="Matériel requis" items={f.materielsRequis} />
+          <Rows title="Paiement en tranches" rows={f.tranches?.map((t) => ({ label: `${t.label} · ${t.deadline}`, value: t.amount }))} />
+          <Rows title="Frais divers" rows={f.fraisDivers?.map((t) => ({ label: t.item, value: t.amount }))} />
+        </div>
+      </section>
       {modules.length > 0 ? (
-        <>
-          <div className="mt-20">
-            <Meta label="Modules" index="03" />
-          </div>
-          <div className="mx-auto grid max-w-5xl gap-4 px-5 md:px-10">
+        <section className="section">
+          <div className="rv"><Head eyebrow="Programme" title={<>Les modules<br />du cursus</>} text="Du design fondamental à la mise en pratique professionnelle." /></div>
+          <div className="timeline">
             {modules.map((m) => (
-              <Rise key={m.id}>
-                <div className="grid gap-3 rounded-3xl bg-mist p-6 md:grid-cols-[4rem_1fr_auto] md:p-8">
-                  <span className="text-2xl font-semibold text-muted">{m.num}</span>
-                  <div>
-                    <h3 className="text-lg font-semibold tracking-tight">{m.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted">{m.description}</p>
-                  </div>
-                  <p className="text-xs text-muted">{m.duration}</p>
-                </div>
-              </Rise>
+              <article key={m.id} className="tl rv"><p className="y">{m.num}</p><div><h3>{m.title}</h3><h4>{m.duration}</h4><p>{m.description}</p></div></article>
             ))}
           </div>
-        </>
+        </section>
       ) : null}
-
-      <div className="mt-20">
-        <Meta label="Autres formations" index="04" />
-      </div>
-      <div className="mx-auto grid max-w-5xl gap-4 px-5 pb-16 md:grid-cols-2 md:px-10">
-        {others.map((o) => (
-          <Link key={o.id} to={`/formations/${o.id}`} className="shot press block rounded-3xl bg-mist p-6">
-            <p className="text-xs text-muted">{o.duration}</p>
-            <p className="mt-1 text-xl font-semibold tracking-tight">{o.title}</p>
-            <p className="mt-2 text-sm text-muted">{o.tagline}</p>
-          </Link>
-        ))}
-      </div>
-    </PageHero>
+      <section className="section">
+        <div className="rv"><Head eyebrow="À découvrir" title="Autres formations" /></div>
+        <div className="grid two">
+          {FORMATIONS_DATA.filter((o) => o.id !== f.id).map((o) => (
+            <Link key={o.id} to={`/formations/${o.id}`} className="offer rv">
+              <div className="pic"><img src={o.imageUrl} alt={o.title} loading="lazy" /><span>{o.duration}</span></div>
+              <div className="meta"><div><b>{o.title}</b><small>{o.tagline}</small></div><span className="p">{o.price}</span></div>
+            </Link>
+          ))}
+        </div>
+      </section>
+    </>
   );
 }
