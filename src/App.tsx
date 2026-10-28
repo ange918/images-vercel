@@ -8,6 +8,7 @@ import { Ceremonies } from "@/pages/Ceremonies";
 import { About } from "@/pages/About";
 import { News } from "@/pages/News";
 import { Contact } from "@/pages/Contact";
+import { Signup } from "@/pages/Signup";
 import { NotFound } from "@/pages/NotFound";
 
 export function App() {
@@ -22,6 +23,7 @@ export function App() {
         <Route path="a-propos" element={<About />} />
         <Route path="actualites" element={<News />} />
         <Route path="contact" element={<Contact />} />
+        <Route path="inscription" element={<Signup />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

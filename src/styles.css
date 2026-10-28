@@ -505,6 +505,44 @@ html.lenis, html.lenis body { height: auto; }
 .sent .ico { margin-inline: auto; }
 .sent .hint { font-size: 11px; color: var(--faint); margin-top: -6px; }
 
+/* Page d'inscription : photo et texte à gauche, formulaire à droite */
+.signup-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: max(780px, 100svh); }
+.signup-left { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-start; padding: 130px 8% 60px 12%; background: var(--dark-2); isolation: isolate; }
+.signup-bg { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; animation: fade 0.9s both; }
+.signup-left::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(11, 19, 32, 0.6) 0%, rgba(11, 19, 32, 0.35) 40%, rgba(11, 19, 32, 0.9) 100%); }
+.signup-copy { display: grid; gap: 18px; max-width: 540px; position: sticky; top: 120px; }
+.signup-copy .eyebrow { color: #7dd3fc; margin: 0; }
+.signup-copy h1 { font-size: clamp(30px, 3.6vw, 48px); font-weight: 600; line-height: 1.1; letter-spacing: -0.03em; }
+.signup-copy .sub { font-size: 14px; line-height: 1.75; color: rgba(255, 255, 255, 0.85); }
+.signup-sum { padding: 18px 20px; border-radius: 20px; background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16); }
+.signup-sum .sum-title { font-size: 15px; font-weight: 600; }
+.signup-sum dl { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px 26px; }
+.signup-sum dt { font-size: 10px; color: rgba(255, 255, 255, 0.65); text-transform: uppercase; letter-spacing: 0.06em; }
+.signup-sum dd { font-size: 13px; font-weight: 500; }
+.signup-points { display: grid; gap: 10px; }
+.signup-points li { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+.signup-points .ico { margin: 0; width: 34px; height: 34px; background: rgba(255, 255, 255, 0.16); color: #fff; }
+.signup-right { background: var(--frame); color: var(--ink); display: flex; align-items: center; padding: 130px 9% 60px 7%; }
+.signup-form { width: 100%; max-width: 560px; }
+.signup-form h2 { font-size: clamp(24px, 2.6vw, 34px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
+.signup-form .intro { margin: 10px 0 22px; font-size: 13px; line-height: 1.7; color: var(--muted); }
+.form-card.plain { padding: 26px; }
+.signup-steps { margin-top: 26px; display: grid; gap: 14px; }
+.signup-steps li { display: flex; gap: 14px; align-items: flex-start; font-size: 13px; }
+.signup-steps .n { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-size: 12px; font-weight: 600; }
+.signup-steps b { display: block; font-weight: 500; }
+.signup-steps small { display: block; margin-top: 2px; font-size: 12px; color: var(--muted); }
+.js .signup-copy > *, .js .signup-form { opacity: 0; transform: translateY(-40px); transition: opacity 0.9s var(--ease), transform 1.2s var(--ease); transition-delay: calc(0.4s + var(--i) * 130ms); }
+.js .signup-copy > .from-left { transform: translateX(-70px); }
+.js .signup-form.from-right { transform: translateX(70px); }
+.js .loaded .signup-copy > *, .js .loaded .signup-form { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .js .signup-copy > *, .js .signup-form { transform: translateY(-14px); }
+  .js .signup-copy > .from-left { transform: translateX(-24px); }
+  .js .signup-form.from-right { transform: translateX(24px); }
+  .js .loaded .signup-copy > *, .js .loaded .signup-form { transform: none; }
+}
+
 /* Responsive */
 @media (max-width: 1000px) {
   .pill-nav a { padding: 8px 11px; }
@@ -536,6 +574,11 @@ html.lenis, html.lenis body { height: auto; }
   .hero-copy .marks > div { flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 12px 6px; border-radius: 16px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(6px); }
   .hero-copy .marks b { font-size: 12px; line-height: 1.25; }
   .hero-copy .marks small { font-size: 10px; line-height: 1.35; }
+  .signup-grid { grid-template-columns: 1fr; min-height: 0; }
+  .signup-left { padding: 110px 22px 36px; min-height: 520px; justify-content: flex-end; }
+  .signup-copy { position: static; }
+  .signup-right { padding: 36px 14px 50px; }
+  .form-card.plain { padding: 20px 16px; }
   .tm-head { padding: 0 22px; }
   .tm-track .person { width: 290px; }
   .deck-stage { height: 400px; }

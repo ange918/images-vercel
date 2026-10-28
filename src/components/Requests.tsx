@@ -1,11 +1,12 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 import { CheckCircle2, Loader2, Send, X } from "lucide-react";
 import { CAMPUSES_DATA, FORMATIONS_DATA, SERVICES_DATA, WORKSHOPS_DATA } from "@/data/pagData";
 import { submitContactMessage, submitQuoteRequest, submitRegistration, type SendResult } from "@/lib/submissions";
 import { flushPending } from "@/lib/pendingQueue";
 import { lockScroll } from "@/lib/scroll";
 
-type Modal = { kind: "registration"; id?: string } | { kind: "quote"; id?: string } | null;
+type Modal = { kind: "quote"; id?: string } | null;
 type Ctx = { openRegistration: (formationId?: string) => void; openQuote: (serviceId?: string) => void };
 
 const RequestsContext = createContext<Ctx>({ openRegistration: () => {}, openQuote: () => {} });
@@ -33,13 +34,14 @@ export function useSubmit(action: (data: FormData, antiSpam: { honeypot: string;
 
 const v = (d: FormData, k: string) => String(d.get(k) ?? "").trim();
 
-export function Done({ queued, onClose, text }: { queued?: boolean; onClose?: () => void; text: string }) {
+export function Done({ queued, onClose, text, after }: { queued?: boolean; onClose?: () => void; text: string; after?: ReactNode }) {
   return (
     <div className="sent swap">
       <span className="ico big"><CheckCircle2 size={30} /></span>
       <h3>Demande envoyée</h3>
       <p>{text}</p>
       {queued ? <p className="hint">Connexion instable : votre demande est gardée sur cet appareil et partira dès que le réseau revient.</p> : null}
+      {after}
       {onClose ? <button className="btn btn-dark" onClick={onClose}>Fermer</button> : null}
     </div>
   );
@@ -61,7 +63,8 @@ const Honeypot = () => (
   <label className="hp" aria-hidden="true">Site web<input name="website" tabIndex={-1} autoComplete="off" /></label>
 );
 
-function RegistrationForm({ formationId, onClose }: { formationId?: string; onClose: () => void }) {
+/** Registration form. Used on the /inscription page; `onFormationChange` lets the page follow the selected formation. */
+export function RegistrationForm({ formationId, onFormationChange, after }: { formationId?: string; onFormationChange?: (id: string) => void; after?: ReactNode }) {
   const { status, submit } = useSubmit((d, anti) => {
     const chosen = v(d, "formation");
     const formation = FORMATIONS_DATA.find((f) => f.id === chosen);
@@ -79,11 +82,11 @@ function RegistrationForm({ formationId, onClose }: { formationId?: string; onCl
       ...anti,
     });
   });
-  if (status.state === "done") return <Done queued={status.queued} onClose={onClose} text="Merci ! L'équipe PAG a bien reçu votre demande d'inscription et vous recontactera très vite." />;
+  if (status.state === "done") return <Done queued={status.queued} text="Merci ! L'équipe PAG a bien reçu votre demande d'inscription et vous recontactera très vite." after={after} />;
   return (
     <form onSubmit={submit} noValidate>
       <label>Formation ou atelier souhaité *
-        <select name="formation" required defaultValue={formationId ?? FORMATIONS_DATA[0]!.id}>
+        <select name="formation" required defaultValue={formationId ?? FORMATIONS_DATA[0]!.id} onChange={(e) => onFormationChange?.(e.target.value)}>
           <optgroup label="Formations">
             {FORMATIONS_DATA.map((f) => <option key={f.id} value={f.id}>{f.title} — {f.duration}</option>)}
           </optgroup>
@@ -206,8 +209,15 @@ export function ContactForm() {
 
 export function RequestsProvider({ children }: { children: ReactNode }) {
   const [modal, setModal] = useState<Modal>(null);
+  const navigate = useNavigate();
   const close = useCallback(() => setModal(null), []);
-  const ctx = useMemo<Ctx>(() => ({ openRegistration: (id) => setModal({ kind: "registration", id }), openQuote: (id) => setModal({ kind: "quote", id }) }), []);
+  const ctx = useMemo<Ctx>(
+    () => ({
+      openRegistration: (id) => navigate(id ? `/inscription?formation=${encodeURIComponent(id)}` : "/inscription"),
+      openQuote: (id) => setModal({ kind: "quote", id }),
+    }),
+    [navigate],
+  );
 
   useEffect(() => {
     void flushPending();
@@ -233,8 +243,8 @@ export function RequestsProvider({ children }: { children: ReactNode }) {
         <div className="modal" onClick={(e) => e.target === e.currentTarget && close()}>
           <div className="modal-card narrow form-card" role="dialog" aria-modal="true" data-lenis-prevent>
             <button className="close" onClick={close} aria-label="Fermer"><X size={22} /></button>
-            <h3>{modal.kind === "registration" ? "Inscription à une formation" : "Demande de devis"}</h3>
-            {modal.kind === "registration" ? <RegistrationForm formationId={modal.id} onClose={close} /> : <QuoteForm serviceId={modal.id} onClose={close} />}
+            <h3>Demande de devis</h3>
+            <QuoteForm serviceId={modal.id} onClose={close} />
           </div>
         </div>
       ) : null}

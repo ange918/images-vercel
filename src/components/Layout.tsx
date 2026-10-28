@@ -44,8 +44,10 @@ export function SiteNav() {
 
 function Footer() {
   const { openRegistration } = useRequests();
+  const { pathname } = useLocation();
   return (
     <>
+      {pathname !== "/inscription" ? (
       <section className="cta-block">
         <img className="cta-bg" src={ceremonieLancerToquesImage} alt="" loading="lazy" />
         <div className="cta-card rv">
@@ -57,6 +59,7 @@ function Footer() {
           </div>
         </div>
       </section>
+      ) : null}
       <footer className="footer">
         <div className="cols">
           <div className="rv">
